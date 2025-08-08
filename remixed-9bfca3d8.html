@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Follower Robot Guide Book</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ffffff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .book-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .page {
+            padding: 40px;
+            margin-bottom: 2px;
+            background: linear-gradient(45deg, #fff 0%, #fafafa 100%);
+            border-left: 8px solid #ff6b35;
+        }
+
+        .page:nth-child(even) {
+            border-left: 8px solid #f7931e;
+            background: linear-gradient(45deg, #fafafa 0%, #fff 100%);
+        }
+
+        .pixel-font {
+            font-family: 'Press Start 2P', cursive;
+            color: #ff6b35;
+            text-shadow: 2px 2px 0px #f7931e;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: white;
+            border-radius: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        h1.white-text {
+            color: white !important;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            to { box-shadow: 0 0 30px rgba(247, 147, 30, 0.8); }
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            margin-top: 25px;
+            color: #f7931e;
+        }
+
+        .robot-cartoon {
+            width: 150px;
+            height: 150px;
+            margin: 20px auto;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .connection-diagram {
+            background: #f8f9fa;
+            border: 3px solid #ff6b35;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .code-snippet {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 0;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85em;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid #333;
+        }
+
+        .code-header {
+            background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
+            padding: 12px 16px;
+            border-bottom: 1px solid #404040;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27ca3f; }
+
+        .code-title {
+            color: #9ca3af;
+            font-size: 0.8em;
+            margin-left: 12px;
+            font-weight: 500;
+        }
+
+        .code-content {
+            padding: 20px;
+            overflow-x: auto;
+            background: #1e1e1e;
+        }
+
+        .code-content .keyword { color: #569cd6; }
+        .code-content .string { color: #ce9178; }
+        .code-content .comment { color: #6a9955; font-style: italic; }
+        .code-content .number { color: #b5cea8; }
+        .code-content .function { color: #dcdcaa; }
+
+        .step-box {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-left: 5px solid #ff6b35;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border: 2px solid #f7931e;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .component-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .component-item {
+            background: white;
+            border: 2px solid #ff6b35;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .sensor-diagram {
+            text-align: center;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+
+        .table-connections {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        .table-connections th,
+        .table-connections td {
+            border: 2px solid #ff6b35;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table-connections th {
+            background: #ff6b35;
+            color: white;
+            font-weight: bold;
+        }
+
+        .table-connections tr:nth-child(even) {
+            background: #fff3e0;
+        }
+
+        .circuit-ascii {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <div class="book-container">
+        <!-- Cover Page -->
+        <div class="page">
+            <h1 class="pixel-font white-text">LINE FOLLOWER ROBOT</h1>
+            <div style="text-align: center; margin: 30px 0;">
+                <svg class="robot-cartoon" viewBox="0 0 150 150">
+                    <!-- Robot Body -->
+                    <rect x="40" y="60" width="70" height="50" fill="#ff6b35" rx="10"/>
+                    <!-- Robot Head -->
+                    <rect x="50" y="30" width="50" height="40" fill="#f7931e" rx="8"/>
+                    <!-- Eyes -->
+                    <circle cx="60" cy="45" r="5" fill="white"/>
+                    <circle cx="90" cy="45" r="5" fill="white"/>
+                    <circle cx="60" cy="45" r="2" fill="black"/>
+                    <circle cx="90" cy="45" r="2" fill="black"/>
+                    <!-- Smile -->
+                    <path d="M 65 55 Q 75 65 85 55" stroke="white" stroke-width="2" fill="none"/>
+                    <!-- Wheels -->
+                    <circle cx="50" cy="125" r="15" fill="#333"/>
+                    <circle cx="100" cy="125" r="15" fill="#333"/>
+                    <!-- Sensors -->
+                    <rect x="30" y="115" width="90" height="8" fill="#4a4a4a" rx="4"/>
+                    <circle cx="35" cy="119" r="2" fill="#ff0000"/>
+                    <circle cx="45" cy="119" r="2" fill="#ff0000"/>
+                    <circle cx="55" cy="119" r="2" fill="#ff0000"/>
+                    <circle cx="65" cy="119" r="2" fill="#ff0000"/>
+                    <circle cx="75" cy="119" r="2" fill="#ff0000"/>
+                    <circle cx="85" cy="119" r="2" fill="#ff0000"/>
+                </svg>
+            </div>
+            <h2 class="pixel-font" style="text-align: center; font-size: 1em;">COMPLETE BUILD GUIDE</h2>
+            <p style="text-align: center; margin-top: 20px; font-size: 1.1em;">
+                🤖 Arduino Nano Based<br>
+                📟 6 TCRT5000 Sensors<br>
+                ⚡ TB6612FNG Motor Driver<br>
+                🔧 Step-by-Step Instructions
+            </p>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="page">
+            <h2 class="pixel-font">TABLE OF CONTENTS</h2>
+            <div style="margin: 20px 0;">
+                <p><strong>1. Introduction & Components</strong> ........................ Page 3</p>
+                <p><strong>2. Circuit Connections</strong> ............................. Page 4</p>
+                <p><strong>3. Hardware Assembly</strong> ............................. Page 5</p>
+                <p><strong>4. Code Explanation</strong> .............................. Page 6</p>
+                <p><strong>5. Sensor Configuration</strong> .......................... Page 7</p>
+                <p><strong>6. Testing & Calibration</strong> ......................... Page 8</p>
+                <p><strong>7. Troubleshooting</strong> ............................... Page 9</p>
+            </div>
+        </div>
+
+        <!-- Page 1: Introduction & Components -->
+        <div class="page">
+            <h2 class="pixel-font">1. INTRODUCTION & COMPONENTS</h2>
+            
+            <p>Welcome to building your own intelligent line follower robot! <span class="emoji">🎉</span> This robot uses 6 TCRT5000 IR sensors to detect and follow black lines with precision.</p>
+
+            <div class="component-list">
+                <div class="component-item">
+                    <strong>Arduino Nano</strong><br>
+                    <img src="C:/Users/User/Desktop/LODU/arduino-nano1.jpg" alt="Arduino Nano" style="max-width: 100%; height: auto; object-fit: contain;"><br>
+                    Main controller
+                </div>
+                <div class="component-item">
+                    <strong>6x TCRT5000</strong><br>
+                    <img src="C:/Users/User/Desktop/LODU/TCRT5000.jpeg" alt="TCRT5000" style="max-width: 100%; height: auto; object-fit: contain;"><br>
+                    IR line sensors
+                </div>
+                <div class="component-item">
+                    <strong>TB6612FNG</strong><br>
+                    <img src="C:/Users/User/Desktop/LODU/Tb66.jpg" alt="TB6612FNG" style="max-width: 100%; height: auto; object-fit: contain;"><br>
+                    Motor driver
+                </div>
+                <div class="component-item">
+                    <strong>Boost Module</strong><br>
+                    <img src="C:/Users/User/Desktop/LODU/boost.webp" alt="Boost Module" style="max-width: 100%; height: auto; object-fit: contain;"><br>
+                    Power management
+                </div>
+                <div class="component-item">
+                    <strong>Buck Module</strong><br>
+                    <img src="C:/Users/User/Desktop/LODU/Mp854 buck.jpg" alt="Buck Module" style="max-width: 100%; height: auto; object-fit: contain;"><br>
+                    Voltage regulation
+                </div>
+                <div class="component-item">
+                    <strong>2x DC Motors</strong><br>
+                    <img src="C:/Users/User/Desktop/LODU/gear.jpg" alt="Gear" style="max-width: 100%; height: auto; object-fit: contain;"><br>
+                    Robot movement
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <strong>⚠️ Important:</strong> Always double-check connections before powering on. Incorrect wiring can damage components!
+            </div>
+        </div>
+
+        <!-- Page 2: Circuit Connections -->
+        <div class="page">
+            <h2 class="pixel-font">2. CIRCUIT CONNECTIONS</h2>
+
+            <h3>Motor Driver (TB6612FNG) Connections:</h3>
+            <table class="table-connections">
+                <tr>
+                    <th>TB6612FNG Pin</th>
+                    <th>Arduino Nano Pin</th>
+                    <th>Function</th>
+                </tr>
+                <tr>
+                    <td>AIN1</td>
+                    <td>D7</td>
+                    <td>Left Motor Forward</td>
+                </tr>
+                <tr>
+                    <td>AIN2</td>
+                    <td>D8</td>
+                    <td>Left Motor Backward</td>
+                </tr>
+                <tr>
+                    <td>PWMA</td>
+                    <td>D9</td>
+                    <td>Left Motor Speed</td>
+                </tr>
+                <tr>
+                    <td>BIN1</td>
+                    <td>D5</td>
+                    <td>Right Motor Forward</td>
+                </tr>
+                <tr>
+                    <td>BIN2</td>
+                    <td>D4</td>
+                    <td>Right Motor Backward</td>
+                </tr>
+                <tr>
+                    <td>PWMB</td>
+                    <td>D3</td>
+                    <td>Right Motor Speed</td>
+                </tr>
+            </table>
+
+            <h3>Sensor Array Connections:</h3>
+            <div class="sensor-diagram">
+                <strong>Sensor Layout (Front View):</strong><br><br>
+                <svg width="100%" height="180" viewBox="0 0 600 180" style="background: #f8f9fa; border-radius: 10px; border: 2px solid #ff6b35;">
+                    <!-- Robot chassis outline -->
+                    <rect x="50" y="120" width="500" height="40" fill="#e0e0e0" stroke="#999" stroke-width="2" rx="5"/>
+                    
+                    <!-- Sensor array bar -->
+                    <rect x="75" y="100" width="450" height="15" fill="#333" rx="3"/>
+                    
+                    <!-- Individual sensors with labels -->
+                    <!-- S6 - Leftmost -->
+                    <circle cx="100" cy="107.5" r="6" fill="#ff3030"/>
+                    <text x="100" y="90" text-anchor="middle" font-size="12" fill="#ff6b35" font-weight="bold">[S6]</text>
+                    <text x="100" y="75" text-anchor="middle" font-size="10" fill="#666">A7</text>
+                    
+                    <!-- S5 - Left -->
+                    <circle cx="170" cy="107.5" r="6" fill="#ff3030"/>
+                    <text x="170" y="90" text-anchor="middle" font-size="12" fill="#ff6b35" font-weight="bold">[S5]</text>
+                    <text x="170" y="75" text-anchor="middle" font-size="10" fill="#666">A6</text>
+                    
+                    <!-- S4 - Center Left -->
+                    <circle cx="240" cy="107.5" r="6" fill="#ff3030"/>
+                    <text x="240" y="90" text-anchor="middle" font-size="12" fill="#ff6b35" font-weight="bold">[S4]</text>
+                    <text x="240" y="75" text-anchor="middle" font-size="10" fill="#666">A3</text>
+                    
+                    <!-- S3 - Center Right -->
+                    <circle cx="310" cy="107.5" r="6" fill="#ff3030"/>
+                    <text x="310" y="90" text-anchor="middle" font-size="12" fill="#ff6b35" font-weight="bold">[S3]</text>
+                    <text x="310" y="75" text-anchor="middle" font-size="10" fill="#666">A2</text>
+                    
+                    <!-- S2 - Right -->
+                    <circle cx="380" cy="107.5" r="6" fill="#ff3030"/>
+                    <text x="380" y="90" text-anchor="middle" font-size="12" fill="#ff6b35" font-weight="bold">[S2]</text>
+                    <text x="380" y="75" text-anchor="middle" font-size="10" fill="#666">A1</text>
+                    
+                    <!-- S1 - Rightmost -->
+                    <circle cx="450" cy="107.5" r="6" fill="#ff3030"/>
+                    <text x="450" y="90" text-anchor="middle" font-size="12" fill="#ff6b35" font-weight="bold">[S1]</text>
+                    <text x="450" y="75" text-anchor="middle" font-size="10" fill="#666">A0</text>
+                    
+                    <!-- Direction arrows and labels -->
+                    <text x="130" y="50" text-anchor="middle" font-size="14" fill="#ff6b35" font-weight="bold">LEFT</text>
+                    <path d="M 80 55 L 110 55 M 85 50 L 80 55 L 85 60" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                    <path d="M 120 55 L 150 55 M 125 50 L 120 55 L 125 60" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                    
+                    <text x="275" y="50" text-anchor="middle" font-size="14" fill="#f7931e" font-weight="bold">CENTER</text>
+                    
+                    <text x="415" y="50" text-anchor="middle" font-size="14" fill="#ff6b35" font-weight="bold">RIGHT</text>
+                    <path d="M 400 55 L 430 55 M 425 50 L 430 55 L 425 60" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                    <path d="M 440 55 L 470 55 M 465 50 L 470 55 L 465 60" stroke="#ff6b35" stroke-width="2" fill="none"/>
+                    
+                    <!-- Sample line to follow (centered between S4 and S3) -->
+                    <rect x="260" y="140" width="30" height="8" fill="#000" rx="2"/>
+                    <text x="275" y="157" text-anchor="middle" font-size="10" fill="#666">Black Line to Follow</text>
+                    
+                    <!-- Center line indicator -->
+                    <line x1="275" y1="115" x2="275" y2="135" stroke="#f7931e" stroke-width="2" stroke-dasharray="3,3"/>
+                    <text x="285" y="125" font-size="9" fill="#f7931e">Center Line</text>
+                    
+                    <!-- Spacing measurements -->
+                    <line x1="100" y1="125" x2="170" y2="125" stroke="#999" stroke-width="1"/>
+                    <text x="135" y="140" text-anchor="middle" font-size="9" fill="#666">~15mm</text>
+                </svg>
+            </div>
+
+            <table class="table-connections">
+                <tr>
+                    <th>Sensor Position</th>
+                    <th>Arduino Pin</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Leftmost (S6)</td>
+                    <td>A7</td>
+                    <td>Far left sensor</td>
+                </tr>
+                <tr>
+                    <td>Left (S5)</td>
+                    <td>A6</td>
+                    <td>Left sensor</td>
+                </tr>
+                <tr>
+                    <td>Center Left (S4)</td>
+                    <td>A3</td>
+                    <td>Center left sensor</td>
+                </tr>
+                <tr>
+                    <td>Center Right (S3)</td>
+                    <td>A2</td>
+                    <td>Center right sensor</td>
+                </tr>
+                <tr>
+                    <td>Right (S2)</td>
+                    <td>A1</td>
+                    <td>Right sensor</td>
+                </tr>
+                <tr>
+                    <td>Rightmost (S1)</td>
+                    <td>A0</td>
+                    <td>Far right sensor</td>
+                </tr>
+            </table>
+
+            <h3>Additional Connections:</h3>
+            <div class="connection-diagram">
+                • Button/Switch: Pin D11 (with internal pull-up)<br>
+                • Head Light LED: Pin D13<br>
+                • Power: Connect boost/buck modules as per your power requirements
+            </div>
+        </div>
+
+        <!-- Page 3: Hardware Assembly -->
+        <div class="page">
+            <h2 class="pixel-font">3. HARDWARE ASSEMBLY</h2>
+
+            <div class="step-box">
+                <h3><span class="emoji">🔧</span> Step 1: Chassis Preparation</h3>
+                <p>Mount the Arduino Nano on the robot chassis. Ensure easy access to USB port for programming.</p>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">⚡</span> Step 2: Motor Driver Installation</h3>
+                <p>Install the TB6612FNG motor driver. Connect the motors to motor outputs A and B on the driver board.</p>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">👁️</span> Step 3: Sensor Array Mounting</h3>
+                <p>Mount the 6 TCRT5000 sensors in a straight line at the front of the robot, about 2-5mm above the ground. Spacing should be approximately 10-15mm between sensors.</p>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">🔌</span> Step 4: Power System</h3>
+                <p>Connect boost and buck modules for proper power distribution. The boost module can power motors while buck module provides regulated 5V for Arduino and sensors.</p>
+            </div>
+
+            <div class="warning-box">
+                <strong>🚨 Assembly Tips:</strong>
+                <ul>
+                    <li>Keep wires organized and secure</li>
+                    <li>Test continuity with multimeter</li>
+                    <li>Ensure sensor array is level</li>
+                    <li>Leave access to programming port</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page 4: Code Explanation -->
+        <div class="page">
+            <h2 class="pixel-font">4. CODE EXPLANATION</h2>
+
+            <h3>Main Setup and Pin Definitions:</h3>
+            <div class="code-snippet">
+                <div class="code-header">
+                    <div class="code-dots">
+                        <div class="code-dot red"></div>
+                        <div class="code-dot yellow"></div>
+                        <div class="code-dot green"></div>
+                    </div>
+                    <div class="code-title">arduino_setup.ino</div>
+                </div>
+                <div class="code-content">
+<span class="keyword">#define</span> left_motor_forward <span class="number">7</span><br>
+<span class="keyword">#define</span> left_motor_backward <span class="number">8</span><br>
+<span class="keyword">#define</span> right_motor_forward <span class="number">5</span><br>
+<span class="keyword">#define</span> right_motor_backward <span class="number">4</span><br>
+<span class="keyword">#define</span> left_motor_speed <span class="number">9</span><br>
+<span class="keyword">#define</span> right_motor_speed <span class="number">3</span><br>
+<span class="keyword">#define</span> head_light <span class="number">13</span><br>
+<span class="keyword">#define</span> speed_left <span class="number">10</span> <span class="comment">//left motor speed coeficient</span><br>
+<span class="keyword">#define</span> speed_right <span class="number">10</span><span class="comment">//right motor speed coeficient</span><br>
+<span class="keyword">#define</span> sw <span class="number">11</span><br>
+<span class="keyword">char</span> point = <span class="string">'s'</span>;<br>
+<span class="keyword">int</span> positional_val;<br>
+<span class="keyword">int</span> sensor_val[<span class="number">6</span>]; <span class="comment">//this is for storing analog value of each sensor</span><br>
+<span class="keyword">int</span> mid[<span class="number">6</span>] = {<span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>}; <span class="comment">//this is the mid value for each sensor. use this array if you want to adjust midoint of each sensor individually</span><br>
+<span class="keyword">int</span> base[<span class="number">6</span>] = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">8</span>, <span class="number">16</span>, <span class="number">32</span>}; <span class="comment">//this is for binary to decimal conversion</span><br>
+<span class="keyword">int</span> sensor; <span class="comment">//this is to store final value after binary conversion</span><br>
+<span class="keyword">int</span> total = <span class="number">0</span>; <span class="comment">//this is to store the count of detected sensor</span><br>
+
+<span class="keyword">void</span> <span class="function">setup</span>() {<br>
+  <span class="function">pinMode</span>(left_motor_forward, OUTPUT);<br>
+  <span class="function">pinMode</span>(left_motor_backward, OUTPUT);<br>
+  <span class="function">pinMode</span>(left_motor_speed, OUTPUT);<br>
+  <span class="function">pinMode</span>(right_motor_forward, OUTPUT);<br>
+  <span class="function">pinMode</span>(right_motor_backward, OUTPUT);<br>
+  <span class="function">pinMode</span>(right_motor_speed, OUTPUT);<br>
+  <span class="function">pinMode</span>(head_light, OUTPUT);<br>
+  <span class="function">pinMode</span>(sw, INPUT_PULLUP);<br>
+ 
+  Serial.<span class="function">begin</span>(<span class="number">9600</span>);<br>
+}<br>
+                </div>
+            </div>
+
+            <h3>Button Control System:</h3>
+            <p>The robot uses a sophisticated button system:</p>
+            <ul>
+                <li><strong>1 Press:</strong> Start line following with LED blink</li>
+                <li><strong>2 Presses:</strong> Manual forward movement</li>
+            </ul>
+
+            <div class="code-snippet">
+                <div class="code-header">
+                    <div class="code-dots">
+                        <div class="code-dot red"></div>
+                        <div class="code-dot yellow"></div>
+                        <div class="code-dot green"></div>
+                    </div>
+                    <div class="code-title">main_loop.ino</div>
+                </div>
+                <div class="code-content">
+<span class="keyword">void</span> <span class="function">loop</span>() {<br>
+  <span class="keyword">byte</span> b = <span class="function">button</span>();  <span class="comment">// Read button presses</span><br>
+  
+  <span class="keyword">if</span> (b != <span class="number">0</span>) {<br>
+    <span class="keyword">if</span> (b == <span class="number">1</span>) {<br>
+      <span class="comment">// Blink LED 3 times before starting</span><br>
+      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">3</span>; i++) {<br>
+        <span class="function">digitalWrite</span>(<span class="number">13</span>, HIGH);<br>
+        <span class="function">delay</span>(<span class="number">250</span>);<br>
+        <span class="function">digitalWrite</span>(<span class="number">13</span>, LOW);<br>
+        <span class="function">delay</span>(<span class="number">250</span>);<br>
+      }<br>
+      <span class="function">line_follow</span>();  <span class="comment">// Start line following</span><br>
+    }<br>
+    <span class="keyword">else if</span> (b == <span class="number">2</span>) { <br>
+      <span class="function">motor</span>(<span class="number">5</span> * speed_left, <span class="number">5</span> * speed_right); <br>
+    }<br>
+  }<br>
+}<br>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 5: Sensor Configuration -->
+        <div class="page">
+            <h2 class="pixel-font">5. SENSOR CONFIGURATION</h2>
+
+            <h3>Sensor Reading Function:</h3>
+            <div class="code-snippet">
+                <div class="code-header">
+                    <div class="code-dots">
+                        <div class="code-dot red"></div>
+                        <div class="code-dot yellow"></div>
+                        <div class="code-dot green"></div>
+                    </div>
+                    <div class="code-title">sensor_functions.ino</div>
+                </div>
+                <div class="code-content">
+<span class="keyword">void</span> <span class="function">sensor_reading</span>() {<br>
+  sensor = <span class="number">0</span>;  <span class="comment">// Reset sensor value</span><br>
+  total = <span class="number">0</span>;   <span class="comment">// Reset total active sensors</span><br>
+  
+  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i < <span class="number">6</span>; i++) {<br>
+    <span class="comment">// Read analog values from sensors</span><br>
+    (i<<span class="number">4</span>) ? sensor_val[i] = <span class="function">analogRead</span>(i) : sensor_val[i] = <span class="function">analogRead</span>(i+<span class="number">2</span>);<br>
+    
+    <span class="comment">// Convert to digital (0 or 1)</span><br>
+    (sensor_val[i] > mid[i]) ? sensor_val[i] = <span class="number">1</span> : sensor_val[i] = <span class="number">0</span>;<br>
+    
+    <span class="comment">// Build binary representation</span><br>
+    sensor += sensor_val[i] * base[i];<br>
+    total += sensor_val[i];<br>
+  }<br>
+}<br>
+                </div>
+            </div>
+
+            <h3>Binary Pattern Recognition:</h3>
+            <p>The code uses binary patterns to determine robot position:</p>
+            
+            <div class="connection-diagram">
+<strong>Common Sensor Patterns:</strong><br>
+• 0b001100 = Centered on line<br>
+• 0b000100 = Slightly right of center<br>
+• 0b001000 = Slightly left of center<br>
+• 0b000110 = More right correction needed<br>
+• 0b011000 = More left correction needed<br>
+• 0b111111 = All sensors detect line (intersection/stop)
+            </div>
+
+            <h3>Calibration Arrays:</h3>
+            <div class="code-snippet">
+                <div class="code-header">
+                    <div class="code-dots">
+                        <div class="code-dot red"></div>
+                        <div class="code-dot yellow"></div>
+                        <div class="code-dot green"></div>
+                    </div>
+                    <div class="code-title">calibration.ino</div>
+                </div>
+                <div class="code-content">
+<span class="keyword">int</span> mid[<span class="number">6</span>] = {<span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>, <span class="number">512</span>}; <span class="comment">// Threshold values</span><br>
+<span class="keyword">int</span> base[<span class="number">6</span>] = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">8</span>, <span class="number">16</span>, <span class="number">32</span>};          <span class="comment">// Binary weights</span><br>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <strong>📊 Calibration Tips:</strong> Adjust the mid[] values based on your surface and lighting conditions. Higher values = less sensitive, Lower values = more sensitive.
+            </div>
+        </div>
+
+        <!-- Page 6: Testing & Calibration -->
+        <div class="page">
+            <h2 class="pixel-font">6. TESTING & CALIBRATION</h2>
+
+            <div class="step-box">
+                <h3><span class="emoji">🧪</span> Step 1: Basic Connectivity Test</h3>
+                <p>Upload the code and check if:</p>
+                <ul>
+                    <li>LED on pin 13 lights up</li>
+                    <li>Button responds correctly</li>
+                    <li>Motors can be controlled</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">👁️</span> Step 2: Sensor Calibration</h3>
+                <p>Place robot on your track and check sensor readings using Serial Monitor. Adjust mid[] values if needed:</p>
+                <div class="code-snippet">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="code-dot red"></div>
+                            <div class="code-dot yellow"></div>
+                            <div class="code-dot green"></div>
+                        </div>
+                        <div class="code-title">calibration_debug.ino</div>
+                    </div>
+                    <div class="code-content">
+<span class="comment">// Add this to setup() for calibration</span><br>
+Serial.<span class="function">println</span>(<span class="string">"Sensor readings:"</span>);<br>
+<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i<<span class="number">6</span>; i++){<br>
+  Serial.<span class="function">print</span>(<span class="string">"S"</span>); <br>
+  Serial.<span class="function">print</span>(i); <br>
+  Serial.<span class="function">print</span>(<span class="string">": "</span>); <br>
+  Serial.<span class="function">println</span>(sensor_val[i]);<br>
+}<br>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">🏁</span> Step 3: Line Following Test</h3>
+                <p>Create a simple test track:</p>
+                <ul>
+                    <li>Straight line (2-3cm wide black tape)</li>
+                    <li>Gentle curves</li>
+                    <li>90-degree turns</li>
+                    <li>T-intersections</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">⚙️</span> Step 4: Speed Tuning</h3>
+                <p>Adjust speed coefficients for optimal performance:</p>
+                <div class="code-snippet">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="code-dot red"></div>
+                            <div class="code-dot yellow"></div>
+                            <div class="code-dot green"></div>
+                        </div>
+                        <div class="code-title">speed_tuning.ino</div>
+                    </div>
+                    <div class="code-content">
+<span class="keyword">#define</span> speed_left <span class="number">10</span>   <span class="comment">// Adjust for left motor</span><br>
+<span class="keyword">#define</span> speed_right <span class="number">10</span>  <span class="comment">// Adjust for right motor</span><br>
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <strong>🎯 Pro Tips:</strong>
+                <ul>
+                    <li>Start with lower speeds for initial testing</li>
+                    <li>Ensure equal motor speeds for straight movement</li>
+                    <li>Test in consistent lighting conditions</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Page 7: Troubleshooting -->
+        <div class="page">
+            <h2 class="pixel-font">7. TROUBLESHOOTING</h2>
+
+            <div class="step-box">
+                <h3><span class="emoji">🚫</span> Robot Won't Start</h3>
+                <p><strong>Check:</strong></p>
+                <ul>
+                    <li>Power connections</li>
+                    <li>Button wiring (pin 11 with pull-up)</li>
+                    <li>Arduino USB connection for programming</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">🔄</span> Robot Goes in Circles</h3>
+                <p><strong>Solutions:</strong></p>
+                <ul>
+                    <li>Check motor connections (swap if needed)</li>
+                    <li>Adjust speed_left and speed_right values</li>
+                    <li>Verify motor driver wiring</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">👁️</span> Sensors Not Working</h3>
+                <p><strong>Verify:</strong></p>
+                <ul>
+                    <li>Sensor height (2-5mm from ground)</li>
+                    <li>Analog pin connections (A0,A1,A2,A3,A6,A7)</li>
+                    <li>Sensor power supply</li>
+                    <li>Calibration values in mid[] array</li>
+                </ul>
+            </div>
+
+            <div class="step-box">
+                <h3><span class="emoji">⚡</span> Motors Not Responding</h3>
+                <p><strong>Check:</strong></p>
+                <ul>
+                    <li>TB6612FNG power supply</li>
+                    <li>Motor driver pin connections</li>
+                    <li>Motor polarity</li>
+                    <li>PWM pin functionality</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <strong>🔍 Debug Code Snippet:</strong>
+                <div class="code-snippet">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="code-dot red"></div>
+                            <div class="code-dot yellow"></div>
+                            <div class="code-dot green"></div>
+                        </div>
+                        <div class="code-title">debug_monitor.ino</div>
+                    </div>
+                    <div class="code-content">
+<span class="comment">// Add to loop() for debugging</span><br>
+Serial.<span class="function">print</span>(<span class="string">"Sensor: "</span>); <br>
+Serial.<span class="function">print</span>(sensor, BIN);<br>
+Serial.<span class="function">print</span>(<span class="string">" Total: "</span>); <br>
+Serial.<span class="function">print</span>(total);<br>
+Serial.<span class="function">print</span>(<span class="string">" Point: "</span>); <br>
+Serial.<span class="function">println</span>(point);<br>
+<span class="function">delay</span>(<span class="number">100</span>);<br>
+                    </div>
+                </div>
+            </div>
+
+            <h3><span class="emoji">🎉</span> Congratulations!</h3>
+            <p>You've successfully built and programmed your line follower robot! This intelligent robot can:</p>
+            <ul>
+                <li>Follow straight and curved lines</li>
+                <li>Handle intersections and turns</li>
+                <li>Detect stop conditions</li>
+                <li>Navigate complex tracks</li>
+            </ul>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <svg width="100" height="100" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#ff6b35"/>
+                    <circle cx="35" cy="40" r="8" fill="white"/>
+                    <circle cx="65" cy="40" r="8" fill="white"/>
+                    <circle cx="35" cy="40" r="3" fill="black"/>
+                    <circle cx="65" cy="40" r="3" fill="black"/>
+                    <path d="M 35 60 Q 50 75 65 60" stroke="white" stroke-width="3" fill="none"/>
+                </svg>
+            </div>
+            <p style="text-align: center; margin-top: 15px;"><strong>Happy Robot Building! 🤖✨</strong></p>
+        </div>
+    </div>
+</body>
+</html>
